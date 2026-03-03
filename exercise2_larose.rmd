@@ -29,7 +29,7 @@ plot(pressure)
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
-bank <- read.csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/ADS-Hands-On-Exercises/bank.csv', sep = ';')
+bank <- read.csv('C:/Users/samsc/Desktop/ADS-Hands-On-Exercises/bank.csv', sep = ';')
 
 #creating contingency table
 contin_table <- table(bank$previous, bank$y)
@@ -49,3 +49,61 @@ first_three_am
 
 
 #Indexing in R and Python are quite different but the ideas are the same
+
+
+
+adult <- read.csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/adult.csv')
+adult
+
+library(rpart)
+
+#Create a contingency table of workclass and sex. Save output as table01.
+table01 <- table(adult$sex, adult$workclass)
+table01
+
+#Create a contingenct table of marital status and sex. Save output as table02.
+table02 <- table(adult$sex, adult$martial.status)
+table02
+
+
+#Display the sex and workclass values of the person in the first record. 
+#What cell do they belong to? How many other records are the same as it?
+first_adult <- adult[1,]
+first_adult
+first_adult_table <- table(first_adult$sex, first_adult$workclass)
+first_adult_table
+
+count <- table01[first_adult$sex, first_adult$workclass]
+count
+
+#Male, State-gov with 809 records with these two same attribute values
+
+#Display the sex and marital status values of the people in records 6-10. Which
+#cells of table02 do they belong to? How many other records in the data set have 
+#the same combinations of sex and marital status values?
+
+#CHATGPT assistance
+six_thru_ten <- adult[c(6,7,8,9,10), ]
+six_thru_ten
+results <- data.frame(  
+  sex = character(),
+  marital_status = character(),
+  count = numeric(),
+  stringsAsFactors = FALSE
+)
+
+  for (i in 1:5) {
+  sex_val <- six_thru_ten$sex[i]
+  marital_val <- six_thru_ten$martial.status[i]
+  count <- table02[sex_val, marital_val]
+  results <- rbind(results, 
+                  data.frame(sex = sex_val,
+                            marital_status = marital_val,
+                            count = count))
+} 
+
+results
+    
+
+
+
