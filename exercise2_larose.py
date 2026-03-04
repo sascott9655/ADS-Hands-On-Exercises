@@ -10,6 +10,7 @@ import pandas as pd
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
 
 bank = pd.read_csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/bank.csv', sep = ';')
+bank
 
 bank.info()
 

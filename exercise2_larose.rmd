@@ -29,7 +29,7 @@ plot(pressure)
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
-bank <- read.csv('C:/Users/samsc/Desktop/ADS-Hands-On-Exercises/bank.csv', sep = ';')
+bank <- read.csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/bank.csv', sep = ';')
 
 #creating contingency table
 contin_table <- table(bank$previous, bank$y)
@@ -103,7 +103,31 @@ results <- data.frame(
 } 
 
 results
-    
 
+#Create a new data set that has only records whose marital status is 
+#"Married-civ-spouse" and name the data set adultMarried
 
+married_mask <- adult$martial.status == ' Married-civ-spouse'
+adultMarried <- adult[married_mask, ]
+adultMarried
 
+#Recreate the contingency table of sex and workclass using the adultMarried data
+#set. What differences do you notice between the sexes?
+
+adultMarried_contin <- table(adultMarried$sex, adultMarried$workclass)
+adultMarried_contin
+
+#more married men are employed than married women
+
+#Create a df with adults over 40 years of age
+adultOver40_mask <- adult$age > 40
+adultOver40 <- adult[adultOver40_mask, ]
+adultOver40
+
+#Recreate the contingency table of sex and workclass using the adultOver40 data
+#set. What differences do you notice between the sexes?    
+
+adultOver40_contin <- table(adultOver40$sex, adultOver40$workclass)
+adultOver40_contin
+
+#more older men are employed than older women
