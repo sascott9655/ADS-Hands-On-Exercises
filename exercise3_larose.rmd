@@ -4,8 +4,6 @@ author: "Sam Scott"
 date: "2026-03-04"
 output: html_document
 ---
-
-
 bank <- read.csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/bank.csv', sep = ';')
 bank
 
@@ -54,13 +52,42 @@ outliers_age_sort <- outliers_age[order(-outliers_age$age_z), ]
 #16. For the job field, combine the jobs with less than 5% of the records into a field called other.
 unique(bank$job)
 
+#Look up how to do value_counts in R using table method
 counts <- table(bank$job)
 counts
+length(counts)
+sum(counts)
 
-for 
+percentages <- counts/sum(counts) #vectorized operations so no need to 
+rare_jobs <- names(percentages[percentages < 0.05])
+rare_jobs
+
+bank$job_recode <- ifelse(bank$job %in% rare_jobs, "other", bank$job)
+
+table(bank$job_recode)
 
 #18. For the variable month, change the field to 1-12, but keep the variable as categorical.
+unique(bank$month)
+bank$month <- recode(bank$month, "jan"= 1, "feb"= 2, "mar"= 3, "apr"= 4, 
+"may"= 5, "jun"= 6, "jul"= 7, "aug"= 8, "sep"=9, "oct"= 10, "nov"= 11, "dec"= 12)
+
 
 #19. Do the following for the duration field
 #a. Standardize the field
 #b. Identify how many outliers there are and identify the most extreme outlier.
+
+bank$duration_z <- scale(x = bank$duration)
+
+dur_outliers1 <- (bank$duration_z < -3)
+dur_outliers2 <- (bank$duration_z > 3)
+dur_outliers <- bank[dur_outliers1 | dur_outliers2, ]
+dur_outliers
+
+length(dur_outliers) 
+#21
+
+#sorts by duration_z but prints the id of those results
+order(dur_outliers$duration_z)
+
+bank_duration_z_sort <- dur_outliers[ order (-dur_outliers$duration_z),][1,21]
+
