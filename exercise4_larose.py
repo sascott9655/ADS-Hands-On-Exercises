@@ -25,11 +25,6 @@ marital_crosstab = pd.crosstab(
 
 bank['marital'].value_counts().plot(kind='bar') 
 
-#The bar graph shows us clearly the differences between the marital status groups.
-#It is easy to identify which classes show the most responses to yes and what class
-#to target as the bank survey. However just because the number like married marital
-#is largest doesn't make it the most likely class to say yes. We will find out when 
-#we normalize the data. 
 
 #b.Bar graph of marital with overlay of y
 
@@ -43,13 +38,21 @@ marital_crosstab.plot(kind='bar', stacked=True)
 #we do that with the div() function, which divides the values of the crosstab
 #table by another object, within each specified axis. 
 #We want to divide (div name comes from divide) the cells in row 1 of the table
-#by the sum of the cells in row 1 and so on
+#by the sum of the cells in row 1 and so on(Larose, 2019)
 
 #axis 0 is row
 crosstab_mar_norm = marital_crosstab.div(marital_crosstab.sum(1), axis=0) 
 #then plot it
 crosstab_mar_norm.plot(kind='bar', stacked=True)
 plt.show()
+
+#The bar graph shows us clearly the differences between the marital status groups.
+#It is easy to identify which classes show the most responses to yes and what class
+#to target as the bank survey. However just because the number like married marital
+#is largest doesn't make it the most likely class to say yes. The normalize data tells
+#the story better on which marital status customers to target. However without the counts of
+#customers the normalize graph is not useful at confirming if the trend would work
+#for a lot of customers.
 
 
 #22. Using the graph from Exercise 21c, describe the relationship between marital
@@ -152,6 +155,7 @@ n_norm = np.nan_to_num(n_norm, nan=0) #deals with division by zero credit to Cop
 #creating upper and lower bounds of each bin 
 ourbins = np.column_stack((bins[0:10], bins[1:11]))
 
+#Manually creating our barplot using the yes and no bins. 
 p1 = plt.bar(x = ourbins[:,0], height = n_norm[:,0], width = ourbins[:, 1] - ourbins[:, 0])
 p2 = plt.bar(x = ourbins[:,0], height = n_norm[:,1], width=ourbins[:, 1]- ourbins[:, 0], bottom = n_norm[:,0])
 plt.legend(['Response = Yes', 'Response = No'])
@@ -159,6 +163,15 @@ plt.title('Normalized Histogram of Duration with Response Overlay')
 plt.xlabel('Duration in seconds')
 plt.ylabel('Proportion')
 plt.show()
+
+
+#The strengths of the graph is that it proper shows what duration is optimal to getting 
+#customer responses to say yes. In this case the graph is showing around 2500 seconds to be
+#the optimal call. However this is a big issue. Since the amount of calls are not being
+#considered, one would think that having a 41 minute call would get someone to say yes. 
+#But, the weakness of this graph is that it is reliant on the counts to verify if the
+#call duration is optimal or just that a few customers happened to say yes for that duration 
+#of the call. 
 
 #----Larose(2019) words and code were used here for the most part
 
