@@ -1,0 +1,105 @@
+---
+title: "Exercise4_larose"
+author: "Sam Scott"
+date: "2026-03-09"
+output: html_document
+---
+
+bank <- read.csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/bank.csv', sep = ';')
+bank
+
+#21. Produce the following graphs. What is the strength of each group? Weakness?
+
+#a. Bar graph of marital
+
+library(ggplot2)
+
+ggplot(bank, aes(marital)) + geom_bar()
+
+#b.Bar graph of marital with overlay of y
+
+ggplot(bank, aes(marital)) + geom_bar(aes(fill = y))
+
+#c.Normalized bar graph of marital, with overlay response.
+
+ggplot(bank, aes(marital)) + geom_bar(aes(fill = y), position = 'fill')
+
+#The bar graph shows us clearly the differences between the marital status groups.
+#It is easy to identify which classes show the most responses to yes and what class
+#to target as the bank survey. However just because the number like married marital
+#is largest doesn't make it the most likely class to say yes. The normalize data tells
+#the story better on which marital status customers to target. However without the counts of
+#customers the normalize graph is not useful at confirming if the trend would work
+#for a lot of customers.
+
+#22. Using the graph from Exercise 21c, describe the relationship between marital
+# and response.
+
+#As we see here, the married category by percentage is least likely to say yes,
+#despite the high number of married people in this data set. Single or divorced
+#would be the better targeted audience for the bank subscription.
+
+#23. Do the following with variables marital and response.
+
+#a. Build a contingency table, being careful to have the correct variables representing
+#the rows and columns. Report the counts and the column percentages.
+
+#counts
+contin_table_marital <- table(bank$y, bank$marital)
+contin_table_marital
+
+#add row and column totals to the table use addmargins()
+contin_table_marital2 <- addmargins(A = contin_table_marital, FUN = list(total = sum), quiet = TRUE)
+contin_table_marital2
+
+#normalize contingency table
+contin_table_marital_per <- round(prop.table(contin_table_marital, margin = 2)* 100, 1)
+contin_table_marital_per
+
+#b.Describe what the contigency table is telling you.
+
+#With the contingency table being shown in counts and percentages, the percentages contingency
+#table proved to tell the most useful information. It shows what the bar graph shows but more
+#clear. The divorced marital status is the category with the most likelihood to response with
+#yes,  meaning that the bank customer target should be on divorced status people instead of married or
+#single people.
+
+#24.Repeat the previous exercise, this time reporting the row percentages. Explain the difference
+#between the interpretation of this table and the previous contingency table.
+
+contin_table_marital_row <- table(bank$marital, bank$y)
+contin_table_marital_row
+
+contin_table_marital_row_per <- round(prop.table(contin_table_marital_row, margin = 2)* 100, 1)
+contin_table_marital_row_per
+
+#The contingency table with the focus on row percentages has the percentages add up by row to 100 percent
+#instead of by column, giving a different interpretation. What this contigency table is describing is
+#the amount of people saying no or yes compared to the sum of all the people in the data set. This
+#just shows that the majority of the people who responded to the survey happened to be married, followed
+#by single then lastly divorced. This is not particularly useful information if we are trying to get
+#people to subscribe to the bank subscription. 
+
+#25. Produce the following graphs. What is the strength of each graph? Weakness?
+
+#a. Histogram of duration
+
+#Rights skewed histogram
+ggplot(bank, aes(duration)) + geom_histogram(color='black')
+
+#b. Histogram of duration, with overlay of response 
+
+ggplot(bank, aes(duration)) + geom_histogram(aes(fill = y), color='black')
+
+#c. Normalized histogram of duration, with overlay of response
+
+ggplot(bank, aes(duration)) + geom_histogram(aes(fill = y), color='black', position = 'fill')
+
+#The strengths of the graph is that it proper shows what duration is optimal to getting 
+#customer responses to say yes. In this case the graph is showing around 2500 seconds to be
+#the optimal call. However this is a big issue. Since the amount of calls are not being
+#considered, one would think that having a 41 minute call would get someone to say yes. 
+#But, the weakness of this graph is that it is reliant on the counts to verify if the
+#call duration is optimal or just that a few customers happened to say yes for that duration 
+#of the call. 
+
