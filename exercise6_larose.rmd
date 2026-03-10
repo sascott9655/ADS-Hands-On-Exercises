@@ -1,0 +1,89 @@
+---
+title: "Exercise6_larose"
+author: "Sam Scott"
+date: "2026-03-10"
+output: html_document
+---
+
+adult_tr <- read.csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/adult.csv')
+adult_tr
+
+adult_tst <- read.csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/adult.test.csv')
+adult_tst
+
+#14. Create a CART model using the training data set that predicts income using marital status
+#and capital gains and losses. Visualize the decision tree (that is, provide the decision tree
+#output). Describe the first few splits in the decision tree.
+
+#change the name of our marital Status column
+colnames(adult_tr) [1] <- "maritalStatus"
+
+adult_tr$Cap_Gains_Losses <- adult_tr$capital.loss + adult_tr$capital.gain
+
+adult_tr$Income <- factor(adult_tr$income)
+adult_tr$maritalStatus <- factor(adult_tr$maritalStatus)
+
+library(rpart); library(rpart.plot)
+
+cart14 <- rpart(formula = income ~ maritalStatus + Cap_Gains_Losses, data = adult_tr, method="class")
+
+rpart.plot(cart14)
+
+?rpart.plot
+
+rpart.plot(cart14, type=4, extra=2)
+
+X = data.frame(maritalStatus = adult_tr$maritalStatus, Cap_Gains_Losses = adult_tr$Cap_Gains_Losses)
+
+predIncomeCART = predict(object = cart14, newdata = X, type = "class")
+
+#The rpart for plotting the CART model shows that it classifies its first split on 
+#income being less than <=50K a year. After that first split, the second split decides whether cap_gains_losses is less than 5119 or the other is if it is greater than 5119. If it is greater than 5119 than we found an adult that make more than 50K 
+#if not than it goes through more splits till it reaches the a node where we find the #target income value the adult makes classified as less than or equal than 50K or #greater than 50K.
+
+
+
+#15. Develop a CART model using the test data set that utilizes the same target and predictor variables. Visualize the decision tree. Compare the decision trees. Does the test data result match the training data result?
+
+colnames(adult_tst) [1] <- "maritalStatus"
+
+adult_tst$Cap_Gains_Losses <- adult_tst$capital.loss + adult_tst$capital.gain
+
+adult_tst$Income <- factor(adult_tst$income)
+adult_tst$maritalStatus <- factor(adult_tst$maritalStatus)
+
+library(rpart); library(rpart.plot)
+
+cart15 <- rpart(formula = income ~ maritalStatus + Cap_Gains_Losses, data = adult_tst, method="class")
+
+rpart.plot(cart14)
+
+?rpart.plot
+
+rpart.plot(cart15, type=4, extra=2)
+
+X2 = data.frame(maritalStatus = adult_tst$maritalStatus, Cap_Gains_Losses = adult_tst$Cap_Gains_Losses)
+
+predIncomeCART = predict(object = cart15, newdata = X2, type = "class")
+
+#The test results very much match the training data results. I assume the model is accurate. The only difference
+#really being that the numbers will be slightly different due to the test set having about half as many instances.
+
+
+#16. Use the training data set to build a C5.0 model to predict income using marital
+#status and capital gains and losses. Specify the minimum of 75 cases per terminal mode.
+#Visualize the decision tree. Describe the first few splits in the decision tree.
+
+library(C50)
+
+C5 <- C5.0(formula = Income ~ maritalStatus + Cap_Gains_Losses, data = adult_tr, control = C5.0Control(minCases=75))
+
+plot(C5)
+
+predict(object = C5, newdata = X)
+
+#17. How does your C5.0 model compare to the CART model? Describe the similarities and differences.
+
+#The CART model and the C5.0 model have some differences. The first is that entropy is used for
+#the C5.0 Model and gini is used for the CART model. 
+#The C5.0 Model splits with a majority of the data going to the records with income <=50 and the other part of the data going to all adults who make more than 50K. The CART model does a similar split however it goes through less leafnode splits.

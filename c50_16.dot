@@ -1,0 +1,21 @@
+digraph Tree {
+node [shape=box, fontname="helvetica"] ;
+edge [fontname="helvetica"] ;
+0 [label="Married <= 0.5\nentropy = 0.796\nsamples = 32561\nvalue = [24720, 7841]\nclass = <=50K"] ;
+1 [label="Cap-Gains-Losses <= 7073.5\nentropy = 0.348\nsamples = 17585\nvalue = [16436, 1149]\nclass = <=50K"] ;
+0 -> 1 [labeldistance=2.5, labelangle=45, headlabel="True"] ;
+5 [label="entropy = 0.283\nsamples = 17274\nvalue = [16425, 849]\nclass = <=50K"] ;
+1 -> 5 ;
+6 [label="entropy = 0.221\nsamples = 311\nvalue = [11, 300]\nclass = >50K"] ;
+1 -> 6 ;
+2 [label="Cap-Gains-Losses <= 5095.5\nentropy = 0.992\nsamples = 14976\nvalue = [8284, 6692]\nclass = <=50K"] ;
+0 -> 2 [labeldistance=2.5, labelangle=-45, headlabel="False"] ;
+3 [label="Cap-Gains-Losses <= 1811.0\nentropy = 0.971\nsamples = 13767\nvalue = [8270, 5497]\nclass = <=50K"] ;
+2 -> 3 ;
+7 [label="entropy = 0.957\nsamples = 12410\nvalue = [7713, 4697]\nclass = <=50K"] ;
+3 -> 7 ;
+8 [label="entropy = 0.977\nsamples = 1357\nvalue = [557, 800]\nclass = >50K"] ;
+3 -> 8 ;
+4 [label="entropy = 0.091\nsamples = 1209\nvalue = [14, 1195]\nclass = >50K"] ;
+2 -> 4 ;
+}

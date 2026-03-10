@@ -77,3 +77,69 @@ predIncomeCART = cart14.predict(X)
 #of income. The algorithm will stop splitting until it finds at least one leaf node
 #that will have an income of >50K. 
 
+#15. Develop a CART model using the test data set that utilizes the same target and predictor
+#variables. Visualize the decision tree. Compare the decision trees. Does the test data result
+#match the training data result?
+
+
+adult_tst = pd.read_csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/adult.test.csv')
+adult_tst
+
+
+#Same process as step 14.
+
+y2 = adult_tst['income']
+
+adult_tst['Cap_Gains_Losses'] = adult_tst['capital-gain'] + adult_tst['capital-loss']
+adult_tst
+
+mar_cat_pd2 = pd.get_dummies(adult_tst['marital-status'], drop_first=True).astype(int)
+
+X2 = pd.concat((adult_tst[['Cap_Gains_Losses']], mar_cat_pd2), axis=1)
+X2
+
+
+cart15 = DecisionTreeClassifier(criterion='gini', max_leaf_nodes=5).fit(X2, y2)
+
+export_graphviz(cart15, out_file = "C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/cart15.dot", feature_names=X_names,
+                class_names=y_names)
+
+predIncomeCART = cart15.predict(X2)
+
+#The test results very much match the training data results. I assume the model is accurate. The only difference
+#really being that the numbers will be slightly different due to the test set having about half as many instances.
+
+#16. Use the training data set to build a C5.0 model to predict income using marital
+#status and capital gains and losses. Specify the minimum of 75 cases per terminal mode.
+#Visualize the decision tree. Describe the first few splits in the decision tree.
+
+c50_16 = DecisionTreeClassifier(criterion='entropy', max_leaf_nodes=5, min_samples_leaf=75).fit(X, y)
+
+export_graphviz(c50_16, out_file = "C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/c50_16.dot", feature_names=X_names,
+                class_names=y_names)
+
+c50_16.predict(X)
+
+# The C5.0 model the same model splits as the CART model. It splits on married <= 0.5. 
+# It then classifies that the model will predict income is <=50K a year whether True or
+# False. The Cap-Gains_Losses variable is married <= 0.5 is true has the split question
+# of is it less than Cap-Gains-Losses of 7073.5. If married <=0.5is False then the split
+# turns into is Cap-Gains_losses <= 5095.5? These two splits still then classify the income
+# of the adult as less than <=50K. The C5.0 algorithm keeps going until each reaches a classification
+# of > 50K. 
+
+#17. How does your C5.0 model compare to the CART model? Describe the similarities and differences.
+
+#Both the CART model and the C5.0 model are very similar. They both have the same test splits with
+#results appearing to be very similar. The use of gini vs entropy for measurement loss seems like they are
+#conversions of one another. The sampling distributions are also the same. The only real difference is that one
+#uses entropy and the other uses gini.
+
+#18. 
+
+c50_18 = DecisionTreeClassifier(criterion='entropy', max_leaf_nodes=5, min_samples_leaf=75).fit(X2, y2)
+
+export_graphviz(c50_18, out_file = "C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/c50_18.dot", feature_names=X_names,
+                class_names=y_names)
+
+c50_18.predict(X2)
