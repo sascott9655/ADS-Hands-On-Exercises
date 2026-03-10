@@ -135,11 +135,5 @@ c50_16.predict(X)
 #conversions of one another. The sampling distributions are also the same. The only real difference is that one
 #uses entropy and the other uses gini.
 
-#18. 
 
-c50_18 = DecisionTreeClassifier(criterion='entropy', max_leaf_nodes=5, min_samples_leaf=75).fit(X2, y2)
 
-export_graphviz(c50_18, out_file = "C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/c50_18.dot", feature_names=X_names,
-                class_names=y_names)
-
-c50_18.predict(X2)

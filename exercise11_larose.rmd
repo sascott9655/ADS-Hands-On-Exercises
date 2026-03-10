@@ -1,0 +1,48 @@
+---
+title: "Exercise11_larose"
+author: "Sam Scott"
+date: "2026-03-10"
+output: html_document
+---
+
+bank_reg_tr <- read.csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/bank_reg_training.csv')
+bank_reg_tr
+bank_reg_tst <- read.csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/bank_reg_test.csv')
+bank_reg_tst
+
+#34. Use the training set to run a regression predicting Credit Score, based on 
+#Debt-to-Income Ratio and Request Amount. Obtain a summary of the model. Do both predictors
+#belong in the model?
+
+bank_reg_tr$Debt.to.Income.Ratio <- as.factor(bank_reg_tr$Debt.to.Income.Ratio)
+bank_reg_tr$Request.Amount <- as.factor(bank_reg_tr$Request.Amount)
+bank_reg_tst$Debt.to.Income.Ratio <- as.factor(bank_reg_tst$Debt.to.Income.Ratio)
+bank_reg_tst$Request.Amount <- as.factor(bank_reg_tst$Request.Amount)
+
+model34 <- lm(formula = Credit.Score ~ Debt.to.Income.Ratio + Request.Amount, data = bank_reg_tr)
+
+summary(model34)
+
+#I believe that the Request Amount predictor does not belong in the model. When I removed it
+#from the model the risk of multicollinearity went down. I also think logically that Request Amount has
+#less to do with Credit score than debt-to-income ratio. So I think only the debt-to-income ratio
+#belongs.
+
+#35. Validate the model from the previous exercise. 
+
+model34_test <- lm(formula = Credit.Score ~ Debt.to.Income.Ratio + Request.Amount, data = bank_reg_tst)
+
+#36-40 done in Python file
+
+#41.Find MAE baseline and MAE regression and determine whether the regression model outperformed
+#its baseline model. 
+
+baseline_pred <- mean(bank_reg_tst$`Credit Score`)
+baseline_pred
+
+y_hat <- predict(model34, newdata = bank_reg_tr)
+mean(y_hat)
+#MAE regression slightly outperforms MAE baseline.
+
+
+
