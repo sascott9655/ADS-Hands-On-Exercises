@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import statsmodels.tools.tools as stattools
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
 
-adult_tr = pd.read_csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/adult.csv')
+adult_tr = pd.read_csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/Data_Sets/adult.csv')
 adult_tr
 
 #14. Create a CART model using the training data set that predicts income using marital status
@@ -34,7 +34,7 @@ adult_tr
 #I would get error called: NotImplementedError: categorical has been removed. This was using
 #Larose's technique in the book. However I was recommend by Microsoft Copilot to use more modern
 #function called pd.getDummies(). So I switched it up. 
-mar_cat_pd = pd.get_dummies(adult_tr['martial-status'], drop_first=True).astype(int)
+mar_cat_pd = pd.get_dummies(adult_tr['marital-status'], drop_first=True).astype(int)
 
 #Larose(2019 code:
 #mar_np = np.array(adult_tr['martial-status'])
@@ -82,7 +82,7 @@ predIncomeCART = cart14.predict(X)
 #match the training data result?
 
 
-adult_tst = pd.read_csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/adult.test.csv')
+adult_tst = pd.read_csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/Data_Sets/adult_ch6_test.csv')
 adult_tst
 
 

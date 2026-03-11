@@ -12,9 +12,9 @@ import numpy as np
 import statsmodels.api as sm
 
 
-bank_reg_tr = pd.read_csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/bank_reg_training.csv')
+bank_reg_tr = pd.read_csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/Data_Sets/bank_reg_training.csv')
 bank_reg_tr
-bank_reg_tst = pd.read_csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/bank_reg_test.csv')
+bank_reg_tst = pd.read_csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/Data_Sets/bank_reg_test.csv')
 bank_reg_tst
 #34. Use the training set to run a regression predicting Credit Score, based on 
 #Debt-to-Income Ratio and Request Amount. Obtain a summary of the model. Do both predictors

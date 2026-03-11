@@ -1,21 +1,21 @@
 digraph Tree {
 node [shape=box, fontname="helvetica"] ;
 edge [fontname="helvetica"] ;
-0 [label="Married <= 0.5\ngini = 0.366\nsamples = 32561\nvalue = [24720, 7841]\nclass = <=50K"] ;
-1 [label="Cap-Gains-Losses <= 7073.5\ngini = 0.122\nsamples = 17585\nvalue = [16436, 1149]\nclass = <=50K"] ;
+0 [label="Married <= 0.5\ngini = 0.364\nsamples = 25000\nvalue = [19016, 5984]\nclass = <=50K"] ;
+1 [label="Cap-Gains-Losses <= 7139.5\ngini = 0.121\nsamples = 13559\nvalue = [12680, 879]\nclass = <=50K"] ;
 0 -> 1 [labeldistance=2.5, labelangle=45, headlabel="True"] ;
-5 [label="gini = 0.093\nsamples = 17274\nvalue = [16425, 849]\nclass = <=50K"] ;
+5 [label="gini = 0.093\nsamples = 13322\nvalue = [12671, 651]\nclass = <=50K"] ;
 1 -> 5 ;
-6 [label="gini = 0.068\nsamples = 311\nvalue = [11, 300]\nclass = >50K"] ;
+6 [label="gini = 0.073\nsamples = 237\nvalue = [9, 228]\nclass = >50K"] ;
 1 -> 6 ;
-2 [label="Cap-Gains-Losses <= 5095.5\ngini = 0.494\nsamples = 14976\nvalue = [8284, 6692]\nclass = <=50K"] ;
+2 [label="Cap-Gains-Losses <= 5095.5\ngini = 0.494\nsamples = 11441\nvalue = [6336, 5105]\nclass = <=50K"] ;
 0 -> 2 [labeldistance=2.5, labelangle=-45, headlabel="False"] ;
-3 [label="Cap-Gains-Losses <= 1811.0\ngini = 0.48\nsamples = 13767\nvalue = [8270, 5497]\nclass = <=50K"] ;
+3 [label="Cap-Gains-Losses <= 1811.0\ngini = 0.48\nsamples = 10529\nvalue = [6324, 4205]\nclass = <=50K"] ;
 2 -> 3 ;
-7 [label="gini = 0.47\nsamples = 12410\nvalue = [7713, 4697]\nclass = <=50K"] ;
+7 [label="gini = 0.471\nsamples = 9498\nvalue = [5902, 3596]\nclass = <=50K"] ;
 3 -> 7 ;
-8 [label="gini = 0.484\nsamples = 1357\nvalue = [557, 800]\nclass = >50K"] ;
+8 [label="gini = 0.484\nsamples = 1031\nvalue = [422, 609]\nclass = >50K"] ;
 3 -> 8 ;
-4 [label="gini = 0.023\nsamples = 1209\nvalue = [14, 1195]\nclass = >50K"] ;
+4 [label="gini = 0.026\nsamples = 912\nvalue = [12, 900]\nclass = >50K"] ;
 2 -> 4 ;
 }
