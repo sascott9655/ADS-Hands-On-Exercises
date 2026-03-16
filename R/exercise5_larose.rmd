@@ -1,0 +1,91 @@
+---
+title: "Exercise_larose5"
+author: "Sam Scott"
+date: "2026-03-16"
+output: html_document
+---
+
+#28, 29, 30, 31, 32, 33, & 34 
+
+churn = read.csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/Data_Sets/churn.csv')
+churn
+
+#28. Partition the data set, so that 67% of the records are included in training
+# data set and 33% are in the test data set. Use a bar graph to confirm your
+# proportions
+
+set.seed(7)
+
+#identify how many records are in the data set
+n <- dim(churn)[1]
+
+#train, test split
+#runif() randomly draws number from 0 and 1 and gets around 67% of the records
+train_ind <- runif(n) < 0.67
+
+churn_train <- churn[ train_ind, ]
+churn_test <- churn[ !train_ind, ]
+
+
+#29. Identify the total number of records in the training data set and how many
+#records in the training set have a churn value of true.
+
+table(churn_train$Churn) #value_counts
+1902+325
+#2227 total training records and 325 are true in the training set
+
+#30. Use your answers from the previous exercise to calculate how many
+#true churn records you need to resample in order to have 20% of the 
+#rebalanced data set have true churm values
+
+p <- 0.20
+tot_train_rec <- 2227
+train_rec_true <- 325
+n_prob <- 1 - p
+amount_needed <- (p * tot_train_rec - train_rec_true) / (n_prob)
+amount_needed <- as.integer(amount_needed) #150 
+
+
+#31. Perform the rebalancing described in the previous exercise and confirm 
+# that 20% of the rebalanced data set have true churn values
+
+#selecting rows where this condition is true using which function
+#save records in to.resample to resample
+to.resample <- which(churn_train$Churn == 'True')
+
+our.resample <- sample(x = to.resample , size = amount_needed, replace=TRUE)
+
+#get records whose record numbers are those in resample
+our.resample <- churn_train[our.resample, ]
+
+#resample back into original data
+train_churn_rebal <- rbind(churn_train, our.resample)
+
+#rbind() function means row bind or append two data sets by putting the rows
+#on top of each other
+
+t.v1 <- table(train_churn_rebal$Churn)
+t.v2 <- rbind(t.v1, round(prop.table(t.v1), 2))
+colnames(t.v2) <- c("False", "True")
+rownames(t.v2) <- c("Count", "Proportion")
+t.v2
+
+#32. Which baseline model do we use to compare our classification model 
+# performance against? To which value does this baseline model assign all 
+# predictions? What is the accuracy of this baseline model?
+
+#We use a binary classifier model and get the majority class and assign the
+#accuracy of predicting the majority class as our baseline model.
+#The value would be when Churn is equal to False which is 0.8
+
+#33. Validate your partition by testing in mean day minutes for the training set
+#versus the test set?
+
+mean(churn_train$Day.Mins) #180
+mean(churn_test$Day.Mins) #177
+
+#34. Validate your partition by testing for the difference in proportion of true
+#churn records for the training set versus the test set.
+
+mean(churn_train$Churn == "True") #14%
+mean(churn_test$Churn == "True") #14%
