@@ -1,0 +1,181 @@
+---
+title: "Exercise_larose7"
+author: "Sam Scott"
+date: "2026-03-17"
+output: html_document
+---
+
+#23, 24, 25, 26, 27, 28, 29, & 30
+#Question 27 Correction - page 111: 27. Create a cost matrix, called the 3x cost matrix
+#that specifies a false negative is three times as bad as a false positive. 
+
+adult_tr = read.csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/Data_Sets/adult_ch6_training.csv')
+adult_tr
+adult_tst = read.csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/Data_Sets/adult_ch6_test.csv')
+adult_tst
+
+#23. Using the training data set, create a 5.0 model (Model 1) to predict a 
+#customer's Income using Marital Status and Capital Gains and Losses. Obtain a
+#predicted responses.
+adult_tr$Income  <- as.factor(adult_tr$Income)
+adult_tst$Income <- as.factor(adult_tst$Income)
+class(adult_tr$Income)
+library(C50)
+C5 <- C5.0(Income ~ Marital.status + Cap_Gains_Losses, data=adult_tr )
+test.X <- subset(x = adult_tst, selec = c("Marital.status", "Cap_Gains_Losses"))
+ypred <- predict(object = C5, newdata = test.X)
+ypred
+
+#24. Evaluate Model 1 using the test data set. Construct a contingency table
+#to compare the actual and predicted values of Income
+
+t1 <- table(adult_tst$Income, ypred)
+row.names(t1) <- c("Actual: 0", "Actual: 1")
+colnames(t1) <- c("Predicted: 0", "Predicted: 1")
+t1 <- addmargins(A = t1, FUN = list(Total = sum), quiet = TRUE); 
+t1
+
+#25. For Model 1, recapitulate Table 7.4 from the text, calculating all of the 
+# model evaluation measures shown in the table. Call this table the Model Evaluation
+# Table. Leave space for model 2
+
+TN = t1[1,1]
+FP = t1[1,2]
+FN = t1[2,1]
+TP = t1[2,2]
+
+#total actually positive 
+TAP <- TP + FN
+
+#total actually negative
+TAN <- FP + TN
+
+TPP <- FP + TP
+
+TPN <- FN + TN
+
+accuracy <- (TN + TP) / (TN + FP + FN + TP)
+error_rate <- 1 - accuracy
+sensitivity <- TP / TAP
+specificity <- TN / TAN
+precision <- TP / TPP
+recall <- sensitivity
+f1 <- 2* (precision * recall) / (precision + recall)
+f2 <- 5 * (precision * recall) / ((4 * precision) + recall)
+f05 <- 1.25 * (precision * recall) / ((0.25 * precision) + recall)
+
+#microsoft copilot help me make the data list in R
+model_evaluation_table <- data.frame(
+  Evaluation_Measure = c(
+    "Accuracy",
+    "Error rate",
+    "Sensitivity (Recall)",
+    "Specificity",
+    "Precision",
+    "F1 Score",
+    "F2 Score",
+    "F0.5 Score"
+  ),
+  Model_1 = c(
+    accuracy,
+    error_rate,
+    sensitivity,
+    specificity,
+    precision,
+    f1,
+    f2,
+    f05
+  )
+)
+
+model_evaluation_table
+
+#26. Clearly and completely interpret each of the Model 1 evaluation measure
+#from the Model Evaluation Table
+
+#See Python version
+
+#27. Create a cost matrix, called the 3x cost matrix
+#that specifies a false negative is three times as bad as a false positive.
+
+cost.C5 <- matrix(c(0,3,1,0), byrow = TRUE, ncol = 2)
+dimnames(cost.C5) <- list(
+  c("<=50K", ">50K"),
+  c("<=50K", ">50K")
+)
+
+#28. Using the training set , build a C5.0 model (Model 2) to predict a customer's
+#Income using Marital Status and Capital Gains and Losses, using the 3x cost matrix
+adult_tr$Income  <- factor(adult_tr$Income)
+adult_tst$Income <- factor(adult_tst$Income)
+C5.costs <- C5.0(Income ~ Marital.status + Cap_Gains_Losses, data = adult_tr, cost = cost.C5)
+levels(adult_tr$Income)
+
+#29. Evaluate your predictions from Model 2 using the actual response values from 
+# the test data set. Add Overall Model Cost and Profit per Customer to the Model
+#Evaluation Table. Calculate all measures from the Model Evaluation.
+
+test.X2 <- adult_tst[, c("Marital.status", "Cap_Gains_Losses")]
+ypred2 <- predict(object = C5.costs, newdata = test.X2)
+
+t2 <- table(adult_tst$Income, ypred2)
+row.names(t2) <- c("Actual: 0", "Actual: 1")
+colnames(t2) <- c("Predicted: 0", "Predicted: 1")
+t2 <- addmargins(A = t2, FUN = list(Total = sum), quiet = TRUE); 
+t2
+
+TN2 <- t2[1,1]
+FP2 <- t2[1,2]
+FN2 <- t2[2,1]
+TP2 <- t2[2,2]
+
+#total actually positive 
+TAP2 <- TP2 + FN2
+
+#total actually negative
+TAN2 <- FP2 + TN2
+
+TPP2 <- FP2 + TP2
+
+TPN2 <- FN2 + TN2
+
+accuracy2 <- (TN2 + TP2) / (TN2 + FP2 + FN2 + TP2)
+error_rate2 <- 1 - accuracy2
+sensitivity2 <- TP2 / TAP2
+specificity2 <- TN2 / TAN2
+precision2 <- TP2 / TPP2
+recall2 <- sensitivity2
+f1two <- 2* (precision2 * recall2) / (precision2 + recall2)
+f2two <- 5 * (precision2 * recall2) / ((4 * precision2) + recall2)
+f05two <- 1.25 * (precision2 * recall2) / ((0.25 * precision2) + recall2)
+
+
+model_evaluation_table2 <- data.frame(
+  Evaluation_Measure = c(
+    "Accuracy",
+    "Error rate",
+    "Sensitivity (Recall)",
+    "Specificity",
+    "Precision",
+    "F1 Score",
+    "F2 Score",
+    "F0.5 Score"
+  ),
+  Model_2 = c(
+    accuracy2,
+    error_rate2,
+    sensitivity2,
+    specificity2,
+    precision2,
+    f1two,
+    f2two,
+    f05two
+  )
+)
+
+model_evaluation_table2
+
+#30. Compare the evaluation measures from Model 1 and Model 2 using the 3x cost
+#matrix. Discuss the strengths and weaknesses of each model.
+
+#See python version
