@@ -1,0 +1,52 @@
+---
+title: "Exericse_larose8"
+author: "Sam Scott"
+date: "2026-03-17"
+output: html_document
+---
+
+fram_tr = read.csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/Data_Sets/framingham_nb_training.csv')
+fram_tr
+fram_tst = read.csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/Data_Sets/framingham_nb_test.csv')
+fram_tst
+
+#31. Run the Naive Bayes classifier to classify persons as living or dead based on sex and education.
+ta <- table(fram_tr$Sex, fram_tr$Educ)
+addmargins(A = ta, FUN=list(Total=sum), quiet=TRUE)
+
+library(e1071)
+
+nb01 <- naiveBayes(formula = Death ~ Sex + Educ, data = fram_tr)
+nb01
+
+#32. Evaluate the Naive Bayes model on the framingham_nb_test data set. Display the
+# results in a contingency table. Edit the row and column names of the table to 
+# make the table more readable. Include a total row and column. 
+
+ypred <- predict(object = nb01, newdata = fram_tst)
+
+t.preds <- table(fram_tst$Death, ypred)
+rownames(t.preds) <- c("Actual: Living", "Actual: Dead")
+colnames(t.preds) <- c("Predicted: Living", "Predicted: Dead")
+addmargins(A= t.preds, FUN=list(Total = sum), quiet=TRUE)
+
+#33. According to your table in the previous exercise, find the following values for the Naive 
+#Bayes model
+#a.Accuracy
+#b.Error rate
+
+TN <- t.preds[1,1]
+FP <- t.preds[1,2]
+FN <- t.preds[2,1]
+TP <- t.preds[2,2]
+
+accuracy <- (TN + TP) / (TN + FP + FN + TP)
+error_rate <- 1 - accuracy
+
+#34.According to your contingency table, find the following values for the Naive
+#Bayes model:
+#a. How often it correctly classifies dead persons
+#It correctly classifies dead people about 48 percent of the time
+#b. How often it correctly classifies living persons. 
+#It does not correctly classify living people at all it just classifies if there are
+#dead which it only corrects have the time
