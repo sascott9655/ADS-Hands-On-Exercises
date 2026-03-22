@@ -1,0 +1,50 @@
+---
+title: "Exercise_larose13"
+author: "Samuel Scott"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+
+sales_train = read.csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/Data_Sets/clothing_sales_training.csv')
+sales_test = read.csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/Data_Sets/clothing_sales_test.csv')
+
+
+
+#13. Create a logistic regression model to predict whether or not a customer has a store
+#credit card, based on whether they have a web account and the days between pruchases.
+#Obtain the summary of the model
+
+logreg01 <- glm(formula = CC ~ Days + Web, data = sales_train, family=binomial)
+summary(logreg01)
+
+
+#14. Are there any variables that should be removed from the model? If so remove them 
+# and rerun the model?
+
+#Yes I believe the Web account variable should be removed as there seems to be no strong correlation between having a Web account and if a customer has a store credit card.
+
+logreg02 <- glm(formula = CC ~ Days, data = sales_train, family = binomial)
+summary(logreg02)
+
+#15. Write the descriptive form of the logistic regression using the coefficients
+#obtained from Question 1
+
+#log(CC) = B0 + B1(Days)
+
+#16. Validate the model using the test data set
+
+logreg02_test <- glm(formula = CC ~ Days, data = sales_test, family = binomial)
+summary(logreg02_test)
+
+#17. Obtain the predicted values of the response variable for each record in the data set. 
+
+ypred <- predict(logreg02, newdata= sales_test, type = "response")
+threshold <- 0.5
+ypred <- ifelse(ypred >= threshold,1,0)
+ypred
+
+View(ypred)
+
+
+

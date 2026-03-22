@@ -46,7 +46,7 @@ logreg02.summary2()
 #15. Write the descriptive form of the logistic regression using the coefficients
 #obtained from Question 1
 
-# CC = B0 + B1(Days)
+#CC = B0 + B1(Days)
 
 #16. Validate the model using the test data set
 

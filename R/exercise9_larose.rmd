@@ -1,0 +1,52 @@
+---
+title: "Exercise_larose9"
+author: "Samuel Scott"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+#Data Science Using Python and R: Chapter 9 - Page 138: Questions #24, 25, 26, 27, 28, 29, & 30
+
+#Use ONLY R for these questions.
+
+bank_train <- read.csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/Data_Sets/bank_marketing_training.csv')
+bank_test <- read.csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/Data_Sets/bank_marketing_test.csv')
+
+
+#24. Prepare the data set for neural network modeling,including standardizing the 
+#variables
+
+bank_train$age <- as.factor(bank_train$age)
+bank_train$job <- as.factor(bank_train$job)
+bank_train$marital <- as.factor(bank_train$marital)
+bank_train$education <- as.factor(bank_train$education)
+bank_train$default <- as.factor(bank_train$default)
+
+#Standardization
+
+#25. Using the training data set, create a neural network model to predict a 
+#customer's Response using whichever predictors you think is appropriate. Obtain 
+# the predicted responses.
+
+#26. Plot the neural network.
+
+#27. Evaluate the neural network model using the test data set. Construct a 
+# contingency table to compare the actual and predicted values for Response.
+
+#28. Which baseline model do we compare your neural network model against? Did it
+# out-perform the baseline according to accuracy?
+
+#29. Using the same predictors you used for your neural network model, build models
+# to predict Response using the following algoritms:
+# a. CART
+# b. C5.0
+# c. Naive Bayes
+
+#30. Compare the results of your neural network model with the three models for the
+# previous exercise, according to the following criteria. Discuss in detail whihc model performed best and worst according to each criterion. 
+# a. Accuracy
+# b. Sensitivity
+# c. Specificity
+
+
+
