@@ -13,7 +13,6 @@ import pandas as pd
 import numpy as np
 import statsmodels.tools.tools as stattools
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score
 
 
 adult_train = pd.read_csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/Data_Sets/adult_ch6_training.csv')
@@ -22,54 +21,35 @@ adult_test = pd.read_csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/Data
 #19. Use random forests on training data set to predict income using marital status
 #capital gains and losses
 
-y = adult_train[['Income']] #dataframe with double brackets a series with single bracket
-adult_train['Marital status'].value_counts()
+y_train = adult_train['Income'] #dataframe with double brackets a series with single bracket
+
 #random forest needs categorical variables to be dummy variables in order for model to run
 
-mar_dummies = pd.get_dummies(adult_train['Marital status']).astype(int)
-mar_dummies_pd = pd.DataFrame(mar_dummies)
-X = pd.concat((adult_train[['Cap_Gains_Losses']], mar_dummies_pd), axis=1)
+mar_dummies_train = pd.get_dummies(adult_train['Marital status']).astype(int)
+mar_dummies_train_pd = pd.DataFrame(mar_dummies_train)
+X_train = pd.concat((adult_train[['Cap_Gains_Losses']], mar_dummies_train_pd), axis=1)
+
+mar_dummies_test = pd.get_dummies(adult_test['Marital status']).astype(int)
+mar_dummies_test_pd = pd.DataFrame(mar_dummies_test)
+X_test = pd.concat((adult_test[['Cap_Gains_Losses']], mar_dummies_test_pd), axis=1)
+y_test = adult_test['Income']
 
 X_names = ['Cap_Gains_Losses', 'Divorced', 'Married', 'Separated', 'Widowed']
 
 y_names = ['<=50K', '>50K']
 
-rfy = np.ravel(y)
+rfy = np.ravel(y_train)
 
-rf = RandomForestClassifier(n_estimators= 100, criterion='gini').fit(X, rfy)
+rf = RandomForestClassifier(n_estimators= 100, criterion='gini').fit(X_train, rfy)
 
-train_model = rf.predict(X)
 
 #20. Use random forests on test data set that utilizes the same target and 
 #predictor variables. Does the test data result match the training data result?
 
-y2 = adult_test[['Income']] #dataframe with double brackets a series with single bracket
-adult_test['Marital status'].value_counts()
-#random forest needs categorical variables to be dummy variables in order for model to run
-
-mar_dummies2 = pd.get_dummies(adult_test['Marital status']).astype(int)
-mar_dummies_pd2 = pd.DataFrame(mar_dummies2)
-X2 = pd.concat((adult_test[['Cap_Gains_Losses']], mar_dummies_pd2), axis=1)
-
-X_names2 = ['Cap_Gains_Losses', 'Divorced', 'Married', 'Separated', 'Widowed']
-
-y_names2 = ['<=50K', '>50K']
-
-rfy2 = np.ravel(y2)
-
-rf2 = RandomForestClassifier(n_estimators= 100, criterion='gini').fit(X2, rfy2)
-
-test_model = rf2.predict(X2)
-
-
-train_acc = accuracy_score(rfy, train_model)
-test_acc = accuracy_score(rfy2, test_model)
-
-train_acc, test_acc
-
-
-
-
-
-
-
+#Copilot help me build accuracy variables for predictions. 
+# Training accuracy
+rf_acc_train = (rf.predict(X_train) == y_train).mean()
+print(rf_acc_train)
+# Test accuracy
+rf_acc_test = (rf.predict(X_test) == y_test).mean()
+print(rf_acc_test)

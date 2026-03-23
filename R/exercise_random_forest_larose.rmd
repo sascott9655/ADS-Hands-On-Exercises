@@ -17,10 +17,29 @@ adult_test = read.csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/Data_Se
 
 library(randomForest)
 
+colnames(adult_train)[1] <- "maritalStatus"
+colnames(adult_test)[1] <- "maritalStatus"
+
+adult_train$Income <- factor(adult_train$Income)
+adult_train$maritalStatus <- factor(adult_train$maritalStatus)
+
+adult_test$Income <- factor(adult_test$Income)
+adult_test$maritalStatus <- factor(adult_test$maritalStatus)
+
+rf <- randomForest(formula = Income ~ maritalStatus + Cap_Gains_Losses, data = adult_train, ntree=100, type='classification')
+
+rf$predicted
 
 
-y <- adult_train$Income
+#20. Use random forests using the test data set that utilizes the same target
+# and predictor variables. Does the test data result match the training data set?
 
-table(adult_train$Marital.status)
+
+rf_pred <- predict(rf, adult_test) #predicting for test data
+rf_acc_test <- mean(rf_pred == adult_test$Income) 
+rf_acc_train <- mean(rf$predicted == adult_train$Income) 
 
 
+#The test data result matches the training data well with the test set slighty
+#outperforming the training data. This means that the model generalizes overall
+#really well. 
