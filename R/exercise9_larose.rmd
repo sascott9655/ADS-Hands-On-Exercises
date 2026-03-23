@@ -16,37 +16,290 @@ bank_test <- read.csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/Data_Se
 #24. Prepare the data set for neural network modeling,including standardizing the 
 #variables
 
-bank_train$age <- as.factor(bank_train$age)
 bank_train$job <- as.factor(bank_train$job)
 bank_train$marital <- as.factor(bank_train$marital)
+bank_train$response <- as.factor(bank_train$response)
 bank_train$education <- as.factor(bank_train$education)
 bank_train$default <- as.factor(bank_train$default)
+bank_train$housing <- as.factor(bank_train$housing)
+bank_train$loan <- as.factor(bank_train$loan)
+bank_train$contact <- as.factor(bank_train$contact)
 
 #Standardization
+
+bank_train$age.mm <- (bank_train$age - min(bank_train$age)) / (max(bank_train$age) - min(bank_train$age))
+
+bank_train$duration.mm <- (bank_train$duration - min(bank_train$duration)) / (max(bank_train$duration) - min(bank_train$duration))
+
+#Do the same for the test data
+
+bank_test$job <- as.factor(bank_test$job)
+bank_test$marital <- as.factor(bank_test$marital)
+bank_test$response <- as.factor(bank_test$response)
+bank_test$education <- as.factor(bank_test$education)
+bank_test$default <- as.factor(bank_test$default)
+bank_test$housing <- as.factor(bank_test$housing)
+bank_test$loan <- as.factor(bank_test$loan)
+bank_test$contact <- as.factor(bank_test$contact)
+
+bank_test$age.mm <- (bank_test$age - min(bank_train$age)) / (max(bank_train$age) - min(bank_train$age))
+bank_test$duration.mm <- (bank_test$duration - min(bank_train$duration)) / (max(bank_train$duration) - min(bank_train$duration))
+
+#The bank dataset has a large class imbalance in the dataset. We need to fix this
+# in order for our models to predict outcomes that generalize well with the class
+
+table(bank_train$response) #value_counts
+#23886 no 2988 yes
+23886 + 2988
+
+table(bank_test$response) #value_counts
+
+p <- 0.30
+tot_train_rec <- 26874
+train_rec_yes <-2988
+n_prob <- 1 - p
+amount_needed <- (p * tot_train_rec - train_rec_yes) / (n_prob)
+amount_needed <- as.integer(amount_needed)
+
+to.resample <- which(bank_train$response == 'yes')
+to.resample2 <- which(bank_test$response == 'yes')
+
+our.resample <- sample(x = to.resample, size = amount_needed, replace=TRUE)
+our.resample2 <- sample(x = to.resample2, size = amount_needed, replace=TRUE)
+#get records whose record numbers are those in resample
+our.resample <- bank_train[our.resample, ]
+our.resample2 <- bank_test[our.resample2, ]
+
+#resample back into original data
+train_bank_rebal <- rbind(bank_train, our.resample)
+test_bank_rebal <- rbind(bank_test, our.resample2)
 
 #25. Using the training data set, create a neural network model to predict a 
 #customer's Response using whichever predictors you think is appropriate. Obtain 
 # the predicted responses.
 
+library(nnet)
+library (NeuralNetTools)
+
+nnet01 <- nnet(response ~ job + marital + education + default + housing + loan + contact + duration.mm + age.mm, data = train_bank_rebal, size = 1)
+
+
 #26. Plot the neural network.
+
+plotnet(nnet01)
 
 #27. Evaluate the neural network model using the test data set. Construct a 
 # contingency table to compare the actual and predicted values for Response.
 
+
+predicted <- predict(object=nnet01, newdata= test_bank_rebal)
+threshold <- ifelse(predicted >= 0.5, "yes", "no")
+pred <- factor(threshold, levels = levels(test_bank_rebal$response))
+pred
+
+
+t.preds <- table(test_bank_rebal$response, pred)
+rownames(t.preds) <- c("Actual: No", "Actual: Yes")
+colnames(t.preds) <- c("Predicted: No", "Predicted: Yes")
+addmargins(A= t.preds, FUN=list(Total = sum), quiet=TRUE)
+
+
 #28. Which baseline model do we compare your neural network model against? Did it
 # out-perform the baseline according to accuracy?
 
+table(train_bank_rebal$response)
+baseline_acc <- mean(train_bank_rebal$response == "no")
+baseline_acc #70%
+
+nn_acc <- mean(pred == test_bank_rebal$response) #81%
+nn_acc
+
+
+TN = t.preds[1,1]
+FP = t.preds[1,2]
+FN = t.preds[2,1]
+TP = t.preds[2,2]
+
+#total actually positive 
+TAP <- TP + FN
+
+#total actually negative
+TAN <- FP + TN
+
+TPP <- FP + TP
+
+TPN <- FN + TN
+
+sensitivity <- TP / TAP
+sensitivity
+specificity <- TN / TAN
+specificity
 #29. Using the same predictors you used for your neural network model, build models
 # to predict Response using the following algoritms:
 # a. CART
 # b. C5.0
 # c. Naive Bayes
 
+#a. CART 
+library(rpart); library(rpart.plot);
+
+cart <- rpart(formula = response ~ job + marital + education + default + housing + loan + contact + duration.mm + age.mm, data = train_bank_rebal)
+
+rpart.plot(cart)
+
+#Ask copilot for help on the predicted_Cart variable because my confusion would
+#have a length error. Having it threshold on yes made the length the same.
+predicted_cart <- predict(object=cart, newdata= test_bank_rebal)[, 'yes'] 
+threshold_cart <- ifelse(predicted_cart >= 0.5, "yes", "no")
+pred_cart <- factor(threshold_cart, levels = levels(test_bank_rebal$response))
+pred_cart
+
+
+
+t.preds_cart <- table(test_bank_rebal$response, pred_cart)
+rownames(t.preds_cart) <- c("Actual: No", "Actual: Yes")
+colnames(t.preds_cart) <- c("Predicted: No", "Predicted: Yes")
+addmargins(A= t.preds_cart, FUN=list(Total = sum), quiet=TRUE)
+
+
+cart_acc <- mean(pred_cart == test_bank_rebal$response) #80%
+cart_acc #80%
+
+TN = t.preds_cart[1,1]
+FP = t.preds_cart[1,2]
+FN = t.preds_cart[2,1]
+TP = t.preds_cart[2,2]
+
+#total actually positive 
+TAP <- TP + FN
+
+#total actually negative
+TAN <- FP + TN
+
+TPP <- FP + TP
+
+TPN <- FN + TN
+
+sensitivity <- TP / TAP
+sensitivity
+specificity <- TN / TAN
+specificity
+
+# b. C5.0
+library(C50)
+
+C5 <- C5.0(formula = response ~ job + marital + education + default + housing + loan + contact + duration.mm + age.mm, data = train_bank_rebal,control = C5.0Control(minCases=75))
+
+plot(C5)
+
+pred_C50 <- predict(object = C5, newdata = test_bank_rebal)
+pred_C50
+
+t.preds_c5 <- table(test_bank_rebal$response, pred_C50)
+rownames(t.preds_c5) <- c("Actual: No", "Actual: Yes")
+colnames(t.preds_c5) <- c("Predicted: No", "Predicted: Yes")
+addmargins(A= t.preds_c5, FUN=list(Total = sum), quiet=TRUE)
+
+
+c5_acc <- mean(pred_C50 == test_bank_rebal$response)
+c5_acc #83%
+
+TN = t.preds_c5[1,1]
+FP = t.preds_c5[1,2]
+FN = t.preds_c5[2,1]
+TP = t.preds_c5[2,2]
+
+#total actually positive 
+TAP <- TP + FN
+
+#total actually negative
+TAN <- FP + TN
+
+TPP <- FP + TP
+
+TPN <- FN + TN
+
+sensitivity <- TP / TAP
+sensitivity
+specificity <- TN / TAN
+specificity
+
+
+# c. Naive Bayes
+library(e1071)
+
+nb01 <- naiveBayes(formula = response ~ job + marital + education + default + housing + loan + contact + duration.mm + age.mm, data = train_bank_rebal)
+
+
+ypred <- predict(object = nb01, newdata = test_bank_rebal)
+
+t.preds_naive<- table(test_bank_rebal$response, ypred)
+rownames(t.preds) <- c("Actual: No", "Actual: Yes")
+colnames(t.preds) <- c("Predicted: No", "Predicted: Yes")
+addmargins(A= t.preds_naive, FUN=list(Total = sum), quiet=TRUE)
+
+nb_acc <- mean(ypred == test_bank_rebal$response) #80%
+nb_acc #80%
+
+TN = t.preds_naive[1,1]
+FP = t.preds_naive[1,2]
+FN = t.preds_naive[2,1]
+TP = t.preds_naive[2,2]
+
+#total actually positive 
+TAP <- TP + FN
+
+#total actually negative
+TAN <- FP + TN
+
+TPP <- FP + TP
+
+TPN <- FN + TN
+
+sensitivity <- TP / TAP
+sensitivity
+specificity <- TN / TAN
+specificity
+
 #30. Compare the results of your neural network model with the three models for the
-# previous exercise, according to the following criteria. Discuss in detail whihc model performed best and worst according to each criterion. 
-# a. Accuracy
+# previous exercise, according to the following criteria. Discuss in detail which model performed best and worst according to each criterion. 
+# a. Accuracy:
+# Neural network -> 78.5%
+# CART -> 80.2%
+# C5.0 -> 82.8%
+# Naive Bayes -> 80.0% 
+
 # b. Sensitivity
+# Neural network -> 85%
+# CART -> 60.3%
+# C5.0 -> 68.0%
+# Naive Bayes -> 49.8%
+
 # c. Specificity
+# Neural network -> 75.7%
+# CART -> 88.7%
+# C5.0 -> 89.2%
+# Naive Bayes -> 93.0%
 
-
-
+#The 4 models here all have their strengths and weaknesses but looking at accuracy,
+#sensitivity, and specificity I would say that the neural network deep learning model
+#is the best choice out of the four. Looking at model accuracy neural network ranks
+#4th, Naive Bayes is 3rd, CART is 2nd, and C5.0 ranks 1st. Accuracy is the measure 
+#that gives the least amount of information on how well the model generalizes as it
+#compares the prediction to the test values to see if they match. Accuracy does
+#not show measurement on how well the model classified just if the 1's and 0's
+#matched. Specificity determines how well a model is able to determine the negative
+#class. The negative class in our bank dataset is no response, and the naive bayes
+#model did best, followed by C5.0, then CART, and lastly Neural network. Since 70%
+#of the instances were no response instances in the data set it is easier for the 
+#models to learn on that class result. Naive Bayes, CART and C5.0 all performed 
+#exceptionally well in that category, while neural networks seemed to struggle at
+#learning the no responses at 75%. When looking at sensitivity, which is a measure
+#of how well the model predicted positive instances or the yes response, this is where neural networks shines. Naive Bayes at 49%, CART at 60%, C5.0 at 68% all struggled to perform on the positive class instances, while the neural network 
+#outperformed these models by a wide margin at 85%. This tells data scientists
+#that neural networks are better at classifying classes with less instances which
+#is useful for classifying study cases such as insurance fraud, or detecting cancer
+#cells where it is expected to have imbalanced classes in the dataset. Overall, since
+#neural networks did not have a significant weakness, combine with its ability to
+#excel at classifying the yes response better than the other models give it to me 
+#the best model to use in this scenario.

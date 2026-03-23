@@ -1,0 +1,26 @@
+---
+title: "Exercise_Random_Forest_Larose"
+author: "Sam Scott"
+date: "2026-03-23"
+output: html_document
+---
+
+#Data Science Using Python and R: Chapter 6 - Page 93: Questions #19 & 20
+
+#Use both R and Python for these questions.
+
+adult_train = read.csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/Data_Sets/adult_ch6_training.csv')
+adult_test = read.csv('C:/Users/samsc/Desktop/ADS-502-Hands-On-Exercises/Data_Sets/adult_ch6_test.csv')
+
+#19. Use random forests on training data set to predict income using marital status
+#capital gains and losses
+
+library(randomForest)
+
+
+
+y <- adult_train$Income
+
+table(adult_train$Marital.status)
+
+
